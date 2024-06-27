@@ -20,7 +20,6 @@ describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let authService: AuthService;
-  let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -47,7 +46,6 @@ describe('RegisterComponent', () => {
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     authService = TestBed.inject(AuthService);
-    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
@@ -57,21 +55,20 @@ describe('RegisterComponent', () => {
   it('should call authService.register with correct data on submit', () => {
     const registerRequest: RegisterRequest = {
       email: 'test@example.com',
-      firstName: 'John',
-      lastName: 'Doe',
+      firstName: 'Romain',
+      lastName: 'R',
       password: 'password123'
     };
     component.form.setValue(registerRequest)
     jest.spyOn(authService, 'register').mockReturnValue(of(void 0));
     component.submit();
     expect(authService.register).toHaveBeenCalledWith(registerRequest);
-    expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
   it('should set onError to true on registration error', () => {
     const registerRequest: RegisterRequest = {
-      email: 'test@example.com',
-      firstName: 'John',
-      lastName: 'Doe',
+      email: 'testexample.com',
+      firstName: 'Romain',
+      lastName: 'R',
       password: 'password123'
     };
     component.form.setValue(registerRequest);

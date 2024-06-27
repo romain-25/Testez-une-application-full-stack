@@ -15,7 +15,6 @@ import {AuthService} from "../../services/auth.service";
 import {of, throwError} from "rxjs";
 import {Router} from "@angular/router";
 import {SessionInformation} from "../../../../interfaces/sessionInformation.interface";
-import {LoginRequest} from "../../interfaces/loginRequest.interface";
 
 describe('LoginComponent', () => {
   let component: LoginComponent;

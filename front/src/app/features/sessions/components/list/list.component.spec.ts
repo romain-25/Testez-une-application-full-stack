@@ -52,35 +52,60 @@ describe('ListComponent', () => {
     component = fixture.componentInstance;
     httpTestingController = TestBed.inject(HttpTestingController);
     debugElement = fixture.debugElement;
-    fixture.detectChanges(); // trigger initial data binding
+    fixture.detectChanges();
   });
-
-  test('should display create button for admin user', () => {
+  afterEach(() => {
+    fixture.destroy();
+  });
+  it('should display create button for admin user', () => {
     const createButton = fixture.nativeElement.querySelector('#create');
     expect(createButton).not.toBeNull();
   });
 
-  test('should not display create button for regular user', () => {
+  test('should not display create button for regular user', async () => {
+    TestBed.resetTestingModule();
     const sessionServiceMock = { sessionInformation: regularUser };
-    TestBed.overrideProvider(SessionService, { useValue: sessionServiceMock });
+    const sessionApiServiceMock = { all: () => of(mockSessions) };
+
+    await TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule,
+        HttpClientTestingModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        NoopAnimationsModule,
+        CommonModule
+      ],
+      declarations: [ListComponent],
+      providers: [
+        { provide: SessionService, useValue: sessionServiceMock },
+        { provide: SessionApiService, useValue: sessionApiServiceMock },
+      ],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ListComponent);
     component = fixture.componentInstance;
+    debugElement = fixture.debugElement;
     fixture.detectChanges();
 
+    await fixture.whenStable();
     const createButton = fixture.nativeElement.querySelector('#create');
     expect(createButton).toBeNull();
   });
 
-  test('should display session list', () => {
+  it('should display session list', async () => {
     fixture.detectChanges();
-    const sessionNames = debugElement.queryAll(By.css('mat-card-title'));
+    await fixture.whenStable();
+    const sessionNames = debugElement.queryAll(By.css('.item'));
     expect(sessionNames.length).toBe(mockSessions.length);
     expect(sessionNames[0].nativeElement.textContent).toContain('Yoga Session');
     expect(sessionNames[1].nativeElement.textContent).toContain('Meditation Session');
   });
 
-  test('should display detail button for each session', () => {
+  it('should display detail button for each session', async () => {
     fixture.detectChanges();
+    await fixture.whenStable();
     const detailButtons = debugElement.queryAll(By.css('#detail'));
     expect(detailButtons.length).toBe(mockSessions.length);
   });

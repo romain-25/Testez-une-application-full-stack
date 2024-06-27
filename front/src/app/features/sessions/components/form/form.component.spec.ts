@@ -12,7 +12,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { expect } from '@jest/globals';
 import { SessionService } from 'src/app/services/session.service';
 import { SessionApiService } from '../../services/session-api.service';
-import { NgZone } from '@angular/core';
 import { FormComponent } from './form.component';
 import {Router} from "@angular/router";
 import {of} from "rxjs";
@@ -24,6 +23,7 @@ describe('FormComponent', () => {
   let router: Router;
   let snackBar: MatSnackBar;
   let snackBarSpy: jest.SpyInstance;
+  let navigateSpy: jest.SpyInstance;
 
   const mockSessionService = {
     sessionInformation: {
@@ -43,8 +43,12 @@ describe('FormComponent', () => {
 
   const mockTeacher = {
     id: 1,
-    firstName: 'John',
-    lastName: 'Doe'
+    firstName: 'Romain',
+    lastName: 'R'
+  };
+
+  const matSnackBarMock = {
+    open: jest.fn()
   };
 
   beforeEach(async () => {
@@ -66,7 +70,7 @@ describe('FormComponent', () => {
         { provide: SessionService, useValue: mockSessionService },
         { provide: SessionApiService, useValue: { create: () => of(mockSession), update: () => of(mockSession), detail: () => of(mockSession) } },
         { provide: TeacherService, useValue: { all: () => of([mockTeacher]) } },
-        { provide: MatSnackBar, useValue: { open: jest.fn() } },
+        { provide: MatSnackBar, useValue: matSnackBarMock  },
         SessionApiService
       ],
       declarations: [FormComponent]
@@ -76,6 +80,7 @@ describe('FormComponent', () => {
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    navigateSpy = jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true));;
     snackBar = TestBed.inject(MatSnackBar);
     snackBarSpy = jest.spyOn(snackBar, 'open');
     fixture.detectChanges();
@@ -85,18 +90,18 @@ describe('FormComponent', () => {
     expect(component).toBeTruthy();
   });
   it('should create a session successfully', async () => {
-    const navigateSpy = jest.spyOn(router, 'navigate');
+    const navigateSpy = jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true));
     component.sessionForm?.setValue({
       name: 'Yoga Session',
-      date: '2023-07-21',
+      date: '2024-07-21',
       teacher_id: 1,
-      description: 'A relaxing yoga session'
+      description: 'Description'
     });
 
     component.submit();
     fixture.detectChanges();
     await fixture.whenStable();
-    expect(navigateSpy).toHaveBeenCalledWith(['']);
+    expect(navigateSpy).toHaveBeenCalledWith(['sessions']);
   });
 
   it('should display error when form is invalid', () => {
@@ -104,10 +109,10 @@ describe('FormComponent', () => {
       name: '',
       date: '',
       teacher_id: '',
-      description: ''
+      description: 'A very long description that exceeds the maximum length allowed'
     });
     component.submit();
     fixture.detectChanges();
-    expect(snackBarSpy).toHaveBeenCalledWith('Form is invalid', 'Close', { duration: 3000 });
+    expect(matSnackBarMock.open).toHaveBeenCalledWith('Form is invalid !', 'Close', { duration: 3000 });
   });
 });
