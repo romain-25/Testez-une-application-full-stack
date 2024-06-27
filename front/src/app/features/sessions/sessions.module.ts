@@ -14,6 +14,7 @@ import { FormComponent } from './components/form/form.component';
 import { DetailComponent } from './components/detail/detail.component';
 import { SessionsRoutingModule } from './sessions-routing.module';
 import localeFr from '@angular/common/locales/fr';
+import {RouterModule} from "@angular/router";
 registerLocaleData(localeFr);
 
 const materialModules = [
@@ -34,6 +35,7 @@ const materialModules = [
   ],
   imports: [
     CommonModule,
+    RouterModule,
     FlexLayoutModule,
     ReactiveFormsModule,
     SessionsRoutingModule,

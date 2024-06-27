@@ -15,6 +15,7 @@ import {AuthService} from "../../services/auth.service";
 import {of, throwError} from "rxjs";
 import {Router} from "@angular/router";
 import {SessionInformation} from "../../../../interfaces/sessionInformation.interface";
+import {LoginRequest} from "../../interfaces/loginRequest.interface";
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -22,29 +23,26 @@ describe('LoginComponent', () => {
   let authService: AuthService;
   let router: Router;
   let sessionService: SessionService;
-  let spy: any;
+  const authServiceMock = {
+    login: jest.fn().mockReturnValue(of({})),
+  };
+
+  const sessionServiceMock = {
+    logIn: jest.fn(),
+  };
 
   beforeEach(async () => {
-    const authServiceMock = {
-      login: jest.fn()
-    };
 
-    const routerMock = {
-      navigate: jest.fn()
-    };
-
-    const sessionServiceMock = {
-      logIn: jest.fn()
-    };
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
-      providers:[
+      providers: [
+        SessionService,
+        AuthService,
         { provide: AuthService, useValue: authServiceMock },
-        { provide: Router, useValue: routerMock },
-        { provide: SessionService, useValue: sessionServiceMock }
-      ],
+        { provide: SessionService, useValue: sessionServiceMock },
+        ],
       imports: [
-        RouterTestingModule,
+        RouterTestingModule.withRoutes([]),
         BrowserAnimationsModule,
         HttpClientModule,
         MatCardModule,
@@ -61,19 +59,26 @@ describe('LoginComponent', () => {
     sessionService = TestBed.inject(SessionService);
     fixture.detectChanges();
   });
-
-  it('should call authService.login and navigate on successful login', () => {
-    const loginRequest = { email: 'test@example.com', password: 'password123' };
-    const sessionInformation: SessionInformation = {} as SessionInformation;
+  it('should call authService.login and navigate on successful login', async () => {
+    const loginRequest = {email: 'test@example.com', password: 'password123'};
+    const sessionInformation: SessionInformation = {
+      token: 'token',
+      type: 'type',
+      id: 1,
+      username: 'username',
+      firstName: 'firstName',
+      lastName: 'lastName',
+      admin: true
+    };
 
     component.form.setValue(loginRequest);
-    jest.spyOn(authService, 'login').mockReturnValue(of(sessionInformation));
-
+    (authService.login as jest.Mock).mockReturnValue(of(sessionInformation));
+    const navigateSpy = jest.spyOn(router, 'navigate');
     component.submit();
-
+    await fixture.whenStable();
     expect(authService.login).toHaveBeenCalledWith(loginRequest);
     expect(sessionService.logIn).toHaveBeenCalledWith(sessionInformation);
-    expect(router.navigate).toHaveBeenCalledWith(['/sessions']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/sessions']);
   });
 
   it('should set onError to true on login error', () => {

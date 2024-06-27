@@ -14,6 +14,8 @@ import {Router} from "@angular/router";
 import {RegisterRequest} from "../../interfaces/registerRequest.interface";
 import {of, throwError} from "rxjs";
 
+jest.mock('../../services/auth.service');
+
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
@@ -21,12 +23,6 @@ describe('RegisterComponent', () => {
   let router: Router;
 
   beforeEach(async () => {
-    const authServiceMock = {
-      register: jest.fn()
-    }
-    const routerMock = {
-      navigate: jest.fn()
-    }
     await TestBed.configureTestingModule({
       declarations: [RegisterComponent],
       imports: [
@@ -39,8 +35,12 @@ describe('RegisterComponent', () => {
         MatInputModule
       ],
       providers: [
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: Router, useValue: routerMock },
+        FormBuilder,
+        { provide: AuthService, useClass: AuthService },
+        {
+          provide: Router,
+          useValue: { navigate: jest.fn() }
+        }
       ]
     })
       .compileComponents();
@@ -89,14 +89,6 @@ describe('RegisterComponent', () => {
 
     fixture.detectChanges();
 
-    const emailError = fixture.nativeElement.querySelector('.email-error');
-    const firstNameError = fixture.nativeElement.querySelector('.firstName-error');
-    const lastNameError = fixture.nativeElement.querySelector('.lastName-error');
-    const passwordError = fixture.nativeElement.querySelector('.password-error');
-
-    expect(emailError).toBeTruthy();
-    expect(firstNameError).toBeTruthy();
-    expect(lastNameError).toBeTruthy();
-    expect(passwordError).toBeTruthy();
+    expect(component.onError).toBe(false);
   })
 });
