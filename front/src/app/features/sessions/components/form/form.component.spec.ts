@@ -80,7 +80,7 @@ describe('FormComponent', () => {
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
-    navigateSpy = jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true));;
+    navigateSpy = jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true));
     snackBar = TestBed.inject(MatSnackBar);
     snackBarSpy = jest.spyOn(snackBar, 'open');
     fixture.detectChanges();
@@ -93,14 +93,14 @@ describe('FormComponent', () => {
     const navigateSpy = jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true));
     component.sessionForm?.setValue({
       name: 'Yoga Session',
-      date: '2024-07-21',
+      date: '2024-07-20',
       teacher_id: 1,
       description: 'Description'
     });
-
     component.submit();
     fixture.detectChanges();
     await fixture.whenStable();
+    expect(matSnackBarMock.open).toHaveBeenCalledWith('Session created !', 'Close', { duration: 3000 });
     expect(navigateSpy).toHaveBeenCalledWith(['sessions']);
   });
 
@@ -109,10 +109,12 @@ describe('FormComponent', () => {
       name: '',
       date: '',
       teacher_id: '',
-      description: 'A very long description that exceeds the maximum length allowed'
+      description: ''
     });
     component.submit();
     fixture.detectChanges();
     expect(matSnackBarMock.open).toHaveBeenCalledWith('Form is invalid !', 'Close', { duration: 3000 });
+    expect(navigateSpy).toHaveBeenCalledWith(['sessions']);
+
   });
 });
