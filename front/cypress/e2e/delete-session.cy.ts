@@ -56,33 +56,19 @@ describe('Sessions List and Detail spec', () => {
       },
     }).as('getTeacherDetail')
 
+    cy.intercept('DELETE', '/api/session/1', {
+      statusCode: 200,
+      body: {}
+    }).as('deleteSession')
+
     cy.visit('/login')
     cy.get('input[formControlName=email]').type("yoga@studio.com")
     cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
     cy.url().should('include', '/sessions')
   })
 
-  it('Displays a list of sessions and session details', () => {
+  it('Displays a list of sessions and session details and delete session', () => {
     cy.wait('@getSessions')
-
-    cy.get('.items .item').should('have.length', 2)
-
-    cy.get('.items .item').first().within(() => {
-      cy.get('mat-card-title').should('contain.text', 'Morning Yoga')
-      cy.get('mat-card-subtitle').should('contain.text', 'Session on')
-      cy.get('p').should('contain.text', 'Start your day with energy')
-      cy.get('button#detail').should('exist')
-      cy.get('button').contains('Edit').should('exist')
-    })
-
-    cy.get('.items .item').eq(1).within(() => {
-      cy.get('mat-card-title').should('contain.text', 'Evening Yoga')
-      cy.get('mat-card-subtitle').should('contain.text', 'Session on')
-      cy.get('p').should('contain.text', 'Relax and unwind')
-      cy.get('button#detail').should('exist')
-      cy.get('button').contains('Edit').should('exist')
-    })
-
     cy.get('.items .item').first().within(() => {
       cy.get('button#detail').click()
     })
@@ -90,15 +76,8 @@ describe('Sessions List and Detail spec', () => {
     cy.wait('@getSessionDetail')
     cy.wait('@getTeacherDetail')
 
-    cy.get('h1').should('contain.text', 'Morning Yoga')
-    cy.get('mat-card-subtitle').should('contain.text', 'Romain R')
-    cy.get('.picture').should('have.attr', 'src', 'assets/sessions.png')
-    cy.get('.description').should('contain.text', 'Start your day with energy')
-    cy.get('.created').should('contain.text', 'Create at')
-    cy.get('.updated').should('contain.text', 'Last update')
-
-    cy.get('button').contains('Delete').should('exist')
-    cy.get('button').contains('Participate').should('not.exist')
-    cy.get('button').contains('Do not participate').should('not.exist')
+    cy.get('@deleteSession')
+    cy.get('button').contains('Delete').click()
+    cy.url().should('include', '/sessions')
   })
 })

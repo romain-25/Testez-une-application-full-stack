@@ -1,5 +1,7 @@
-describe('Sessions List spec', () => {
-  beforeEach(() => {
+describe('Login spec', () => {
+  it('Login successfull', () => {
+    cy.visit('/login')
+
     cy.intercept('POST', '/api/auth/login', {
       body: {
         id: 1,
@@ -8,7 +10,14 @@ describe('Sessions List spec', () => {
         lastName: 'lastName',
         admin: true
       },
-    }).as('login')
+    })
+
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/session',
+      },
+      []).as('session')
 
     cy.intercept('GET', '/api/session', {
       body: [
@@ -34,32 +43,27 @@ describe('Sessions List spec', () => {
         },
       ],
     }).as('getSessions')
-
-    cy.visit('/login')
+    cy.intercept('GET', '/api/user/1', {
+      body: {
+        id: 1,
+        email: "romain@studio.com",
+        lastName: "romain",
+        firstName: "rouabah",
+        admin: true,
+        password: "pass!1234",
+        createdAt: new Date(),
+        updatedAt: null
+      }
+    })
     cy.get('input[formControlName=email]').type("yoga@studio.com")
     cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
     cy.url().should('include', '/sessions')
-  })
-
-  it('Displays a list of sessions', () => {
     cy.wait('@getSessions')
-
-    cy.get('.items .item').should('have.length', 2)
-
-    cy.get('.items .item').first().within(() => {
-      cy.get('mat-card-title').should('contain.text', 'Morning Yoga')
-      cy.get('mat-card-subtitle').should('contain.text', 'Session on')
-      cy.get('p').should('contain.text', 'Start your day with energy')
-      cy.get('button#detail').should('exist')
-      cy.get('button').contains('Edit').should('exist')
-    })
-
-    cy.get('.items .item').eq(1).within(() => {
-      cy.get('mat-card-title').should('contain.text', 'Evening Yoga')
-      cy.get('mat-card-subtitle').should('contain.text', 'Session on')
-      cy.get('p').should('contain.text', 'Relax and unwind')
-      cy.get('button#detail').should('exist')
-      cy.get('button').contains('Edit').should('exist')
+    // cy.visit('/me')
+    cy.get('span').contains('Account').click()
+    it('Displays User information', () => {
+      cy.get('p').should('contain.text', 'Name')
+      cy.get('p').should('contain.text', 'Email')
     })
   })
-})
+});

@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
-import { SessionService } from '../../../../services/session.service';
-import { TeacherService } from '../../../../services/teacher.service';
-import { Session } from '../../interfaces/session.interface';
-import { SessionApiService } from '../../services/session-api.service';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {ActivatedRoute, Router} from '@angular/router';
+import {SessionService} from '../../../../services/session.service';
+import {TeacherService} from '../../../../services/teacher.service';
+import {Session} from '../../interfaces/session.interface';
+import {SessionApiService} from '../../services/session-api.service';
 
 @Component({
   selector: 'app-form',
@@ -48,22 +48,21 @@ export class FormComponent implements OnInit {
 
   public submit(): void {
     const session = this.sessionForm?.value as Session;
-if(!this.sessionForm?.valid){
-  if (!this.onUpdate) {
-    this.sessionApiService
-      .create(session)
-      .subscribe((_: Session) => {
-          this.exitPage('Session created !')
-      });
-  } else {
-    this.sessionApiService
-      .update(this.id!, session)
-      .subscribe((_: Session) => this.exitPage('Session updated !'));
-  }
-}else{
-  this.exitPage('Form is invalid !')
-}
-
+    if (this.sessionForm?.valid) {
+      if (!this.onUpdate) {
+        this.sessionApiService
+          .create(session)
+          .subscribe((_: Session) => {
+            this.exitPage('Session created !')
+          });
+      } else {
+        this.sessionApiService
+          .update(this.id!, session)
+          .subscribe((_: Session) => this.exitPage('Session updated !'));
+      }
+    } else {
+      this.exitPage('Form is invalid !')
+    }
   }
 
   private initForm(session?: Session): void {
@@ -84,14 +83,14 @@ if(!this.sessionForm?.valid){
         session ? session.description : '',
         [
           Validators.required,
-          Validators.max(20)
+          Validators.max(200)
         ]
       ],
     });
   }
 
   private exitPage(message: string): void {
-    this.matSnackBar.open(message, 'Close', { duration: 3000 });
+    this.matSnackBar.open(message, 'Close', {duration: 3000});
     this.router.navigate(['sessions']);
   }
 }
