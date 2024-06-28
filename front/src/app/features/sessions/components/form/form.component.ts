@@ -48,16 +48,22 @@ export class FormComponent implements OnInit {
 
   public submit(): void {
     const session = this.sessionForm?.value as Session;
+if(!this.sessionForm?.valid){
+  if (!this.onUpdate) {
+    this.sessionApiService
+      .create(session)
+      .subscribe((_: Session) => {
+          this.exitPage('Session created !')
+      });
+  } else {
+    this.sessionApiService
+      .update(this.id!, session)
+      .subscribe((_: Session) => this.exitPage('Session updated !'));
+  }
+}else{
+  this.exitPage('Form is invalid !')
+}
 
-    if (!this.onUpdate) {
-      this.sessionApiService
-        .create(session)
-        .subscribe((_: Session) => this.exitPage('Session created !'));
-    } else {
-      this.sessionApiService
-        .update(this.id!, session)
-        .subscribe((_: Session) => this.exitPage('Session updated !'));
-    }
   }
 
   private initForm(session?: Session): void {
@@ -78,7 +84,7 @@ export class FormComponent implements OnInit {
         session ? session.description : '',
         [
           Validators.required,
-          Validators.max(2000)
+          Validators.max(20)
         ]
       ],
     });
