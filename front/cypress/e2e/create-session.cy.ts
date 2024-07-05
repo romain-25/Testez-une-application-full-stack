@@ -42,9 +42,9 @@ describe('Sessions List spec', () => {
       ],
     }).as('getTeachers')
 
-    cy.intercept('POST', '/api/update/1', {
+    cy.intercept('POST', '/api/session', {
       body: {
-        id: 3,
+        id: 1,
         name: 'New Morning yoga',
         description: 'Start your day with more energy',
         date: '2024-08-22',
@@ -54,6 +54,7 @@ describe('Sessions List spec', () => {
         updatedAt: new Date(),
       },
     }).as('createSession')
+
     cy.visit('/login')
     cy.get('input[formControlName=email]').type("yoga@studio.com")
     cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
