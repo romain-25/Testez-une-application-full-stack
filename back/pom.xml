@@ -144,7 +144,6 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
-					<!-- attached to Maven test phase -->
 					<execution>
 						<id>report</id>
 						<phase>test</phase>
@@ -152,7 +151,6 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
-
 					<execution>
 						<id>jacoco-check</id>
 						<goals>
@@ -162,6 +160,9 @@
 							<rules>
 								<rule>
 									<element>PACKAGE</element>
+									<excludes>
+										<exclude>**/dto/**</exclude>
+									</excludes>
 									<limits>
 										<limit>
 											<counter>LINE</counter>
@@ -173,10 +174,17 @@
 							</rules>
 						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 
 </project>

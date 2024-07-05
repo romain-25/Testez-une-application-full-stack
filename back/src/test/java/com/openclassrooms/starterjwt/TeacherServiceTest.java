@@ -37,5 +37,27 @@ class TeacherServiceTest {
             Teacher found = teacherService.findById(teacher.getId());
             assertEquals(teacher, found);
         }
+    @Test
+    @DisplayName("FindById returns teacher when found")
+    void testFindById_TeacherFound() {
+        Teacher teacher = new Teacher();
+        teacher.setId(1L);
+        teacher.setFirstName("Romain");
+        teacher.setLastName("R");
+        when(teacherRepository.findById(1L)).thenReturn(Optional.of(teacher));
 
+        Teacher foundTeacher = teacherService.findById(1L);
+
+        assertEquals(teacher, foundTeacher);
+    }
+
+    @Test
+    @DisplayName("FindById returns null when teacher not found")
+    void testFindById_TeacherNotFound() {
+        when(teacherRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Teacher foundTeacher = teacherService.findById(1L);
+
+        assertNull(foundTeacher);
+    }
 }
