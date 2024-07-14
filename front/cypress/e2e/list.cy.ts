@@ -62,4 +62,52 @@ describe('Sessions List spec', () => {
       cy.get('button').contains('Edit').should('exist')
     })
   })
+  it('Displays create button for admin', () => {
+    cy.wait('@getSessions')
+    cy.get('button#create').should('exist');
+  });
+  it('Does not display create button for regular user', () => {
+    cy.intercept('POST', '/api/auth/login', {
+      body: {
+        id: 2,
+        username: 'userName',
+        firstName: 'firstName',
+        lastName: 'lastName',
+        admin: false
+      },
+    }).as('loginRegular');
+
+    cy.intercept('GET', '/api/session', {
+      body: [
+        {
+          id: 1,
+          name: 'Morning Yoga',
+          description: 'Start your day with energy',
+          date: new Date(),
+          teacher_id: 1,
+          users: [1, 2, 3],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          name: 'Evening Yoga',
+          description: 'Relax and unwind',
+          date: new Date(),
+          teacher_id: 2,
+          users: [4, 5, 6],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+    }).as('getSessions')
+
+    cy.visit('/login')
+    cy.get('input[formControlName=email]').type("yoga@studio.com")
+    cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
+    cy.wait('@getSessions')
+    cy.url().should('include', '/sessions');
+    cy.get('button#create').should('not.exist');
+  });
+
 })

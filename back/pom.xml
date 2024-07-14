@@ -126,6 +126,15 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/exception/**</exclude>
+						<exclude>**/mapper/**</exclude>
+						<exclude>**/models/**</exclude>
+						<exclude>**/payload/**</exclude>
+					</excludes>
+				</configuration>
 				<version>0.8.8</version>
 				<executions>
 					<execution>
@@ -139,13 +148,6 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<configuration>
-							<excludes>
-								<exclude>com/openclassrooms/starterjwt/dto/SessionDto</exclude>
-								<exclude>com/openclassrooms/starterjwt/dto/TeacherDto</exclude>
-								<exclude>com/openclassrooms/starterjwt/dto/UserDto</exclude>
-							</excludes>
-						</configuration>
 					</execution>
 					<execution>
 						<id>jacoco-check</id>
@@ -156,11 +158,6 @@
 							<rules>
 								<rule>
 									<element>PACKAGE</element>
-									<excludes>
-										<exclude>com/openclassrooms/starterjwt/dto/SessionDto</exclude>
-										<exclude>com/openclassrooms/starterjwt/dto/TeacherDto</exclude>
-										<exclude>com/openclassrooms/starterjwt/dto/UserDto</exclude>
-									</excludes>
 									<limits>
 										<limit>
 											<counter>LINE</counter>

@@ -37,9 +37,9 @@ describe('LoginComponent', () => {
       providers: [
         SessionService,
         AuthService,
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: SessionService, useValue: sessionServiceMock },
-        ],
+        {provide: AuthService, useValue: authServiceMock},
+        {provide: SessionService, useValue: sessionServiceMock},
+      ],
       imports: [
         RouterTestingModule.withRoutes([]),
         BrowserAnimationsModule,
@@ -81,7 +81,7 @@ describe('LoginComponent', () => {
   });
 
   it('should set onError to true on login error', () => {
-    const loginRequest = { email: 'test@example.com', password: 'password123' };
+    const loginRequest = {email: 'test@example.com', password: 'password123'};
 
     component.form.setValue(loginRequest);
     jest.spyOn(authService, 'login').mockReturnValue(throwError(() => new Error('test')));
@@ -90,5 +90,14 @@ describe('LoginComponent', () => {
 
     expect(authService.login).toHaveBeenCalledWith(loginRequest);
     expect(component.onError).toBe(true);
+  });
+
+  it('should display validation errors for required fields', () => {
+    component.form.controls['email'].setValue('');
+    component.form.controls['password'].setValue('');
+
+    fixture.detectChanges();
+
+    expect(component.onError).toBe(false);
   });
 });

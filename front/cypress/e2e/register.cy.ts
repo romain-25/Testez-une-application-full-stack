@@ -17,4 +17,10 @@ describe('Register spec', () => {
     // cy.get('input[type=submit]').click()
     cy.url().should('include', '/login')
   })
+  it('Register unsuccessful with existing email', () => {
+    cy.visit('/register');
+    cy.get('input[formControlName=email]').type("existing@studio.com");
+    cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`);
+    cy.get('.error-message').should('be.visible').and('contain.text', 'Email already in use');
+  });
 });
