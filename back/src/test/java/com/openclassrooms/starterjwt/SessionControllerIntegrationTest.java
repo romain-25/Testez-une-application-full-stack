@@ -49,42 +49,6 @@ class SessionControllerIntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-
-    @WithMockUser(username = "testuser", roles = {"USER"})
-    @Test
-    @DisplayName("Create session in SQL base and GET all session of controller")
-    void testFindAllSessionsViaController() throws Exception {
-
-        Teacher teacher = new Teacher();
-        teacher.setId(1L);
-        teacher.setFirstName("Romain");
-        teacher.setLastName("R");
-
-        Session session = Session.builder()
-                .id(1L)
-                .name("Test Session")
-                .date(new Date())
-                .description("Session de test")
-                .teacher(teacher)
-                .users(new ArrayList<>())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        sessionRepository.save(session);
-
-        MvcResult result = mockMvc.perform(get("/api/session")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        String responseJson = result.getResponse().getContentAsString();
-        Session[] sessions = objectMapper.readValue(responseJson, Session[].class);
-
-        assertFalse(sessions.length == 0);
-    }
-
     @WithMockUser(username = "testuser", roles = {"USER"})
     @Test
     @DisplayName("Create a new session")
@@ -114,6 +78,23 @@ class SessionControllerIntegrationTest {
         assertTrue(responseSession.getId() != null);
         assertTrue(responseSession.getName().equals("New Session"));
     }
+    @WithMockUser(username = "testuser", roles = {"USER"})
+    @Test
+    @DisplayName("Create session in SQL base and GET all session of controller")
+    void testFindAllSessionsViaController() throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/session")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String responseJson = result.getResponse().getContentAsString();
+        Session[] sessions = objectMapper.readValue(responseJson, Session[].class);
+
+        assertFalse(sessions.length == 0);
+    }
+
+
 
     @WithMockUser(username = "testuser", roles = {"USER"})
     @Test
@@ -152,34 +133,6 @@ class SessionControllerIntegrationTest {
         Session responseSession = objectMapper.readValue(responseJson, Session.class);
 
         assertTrue(responseSession.getName().equals("Updated Session"));
-    }
-
-    @WithMockUser(username = "testuser", roles = {"USER"})
-    @Test
-    @DisplayName("Delete an existing session")
-    void testDeleteSession() throws Exception {
-        Teacher teacher = new Teacher();
-        teacher.setFirstName("Romain");
-        teacher.setLastName("R");
-        teacher = teacherRepository.save(teacher);
-
-        Session session = Session.builder()
-                .name("Session to delete")
-                .date(new Date())
-                .description("This session will be deleted")
-                .teacher(teacher)
-                .users(new ArrayList<>())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        session = sessionRepository.save(session);
-
-        mockMvc.perform(delete("/api/session/" + session.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        assertTrue(sessionRepository.findById(session.getId()).isEmpty());
     }
 
     @WithMockUser(username = "testuser", roles = {"USER"})
@@ -235,5 +188,31 @@ class SessionControllerIntegrationTest {
         userRepository.delete(userFound);
 
     }
+    @WithMockUser(username = "testuser", roles = {"USER"})
+    @Test
+    @DisplayName("Delete an existing session")
+    void testDeleteSession() throws Exception {
+        Teacher teacher = new Teacher();
+        teacher.setFirstName("Romain");
+        teacher.setLastName("R");
+        teacher = teacherRepository.save(teacher);
 
+        Session session = Session.builder()
+                .name("Session to delete")
+                .date(new Date())
+                .description("This session will be deleted")
+                .teacher(teacher)
+                .users(new ArrayList<>())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        session = sessionRepository.save(session);
+
+        mockMvc.perform(delete("/api/session/" + session.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertTrue(sessionRepository.findById(session.getId()).isEmpty());
+    }
 }

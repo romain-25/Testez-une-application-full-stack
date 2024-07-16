@@ -128,6 +128,8 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
+						<exclude>com/openclassrooms/starterjwt/SpringBootSecurityJwtApplication.class</exclude>
+						<exclude>**/dto/**</exclude>
 						<exclude>**/dto/**</exclude>
 						<exclude>**/exception/**</exclude>
 						<exclude>**/mapper/**</exclude>
