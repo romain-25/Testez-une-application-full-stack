@@ -123,5 +123,17 @@ describe('DetailComponent', () => {
     expect(matSnackBarMock.open).toHaveBeenCalledWith('Session deleted !', 'Close', { duration: 3000 });
     expect(navigateSpy).toHaveBeenCalledWith(['sessions']);
   });
+  it('should call participate on sessionApiService when participate is called', () => {
+    component.participate();
+    expect(sessionApiServiceMock.participate).toHaveBeenCalledWith('1', '1');
+    expect(sessionApiServiceMock.detail).toHaveBeenCalledWith('1');
+  });
+
+  it('should call unParticipate on sessionApiService when unParticipate is called', () => {
+    component.unParticipate();
+    expect(sessionApiServiceMock.unParticipate).toHaveBeenCalledWith('1', '1');
+    expect(sessionApiServiceMock.detail).toHaveBeenCalledWith('1');
+  });
+
 });
 
