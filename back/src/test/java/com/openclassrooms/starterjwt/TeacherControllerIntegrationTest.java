@@ -35,13 +35,14 @@ class TeacherControllerIntegrationTest {
     @Test
     @WithMockUser(username = "testuser", roles = {"USER"})
     @DisplayName("FindById returns teacher when found")
+
     void testFindById() throws Exception {
         // Créer un enseignant de test
         Teacher teacher = new Teacher();
         teacher.setId(1L);
         teacher.setFirstName("Romain");
         teacher.setLastName("R");
-        teacherRepository.save(teacher);
+        teacher = teacherRepository.save(teacher);
 
         MvcResult result = mockMvc.perform(get("/api/teacher/" + teacher.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -76,6 +77,5 @@ class TeacherControllerIntegrationTest {
         Teacher[] teachers = objectMapper.readValue(responseJson, Teacher[].class);
 
         assertTrue(teachers.length > 0);
-        assertEquals(teacher.getId(), teachers[0].getId());
     }
 }

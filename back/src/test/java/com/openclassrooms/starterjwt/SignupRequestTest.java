@@ -29,4 +29,5 @@ public class SignupRequestTest {
         assertTrue(violations.isEmpty());
 
     }
+
 }
