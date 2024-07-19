@@ -122,7 +122,6 @@ describe('FormComponent', () => {
   });
   it('should update a session successfully', async () => {
     component.onUpdate = true;
-    // component.id = '1';
     component.sessionForm?.setValue({
       name: 'Updated Yoga Session',
       date: '2024-07-20',
