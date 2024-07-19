@@ -65,7 +65,7 @@ export class FormComponent implements OnInit {
     }
   }
 
-  private initForm(session?: Session): void {
+  initForm(session?: Session): void {
     this.sessionForm = this.fb.group({
       name: [
         session ? session.name : '',

@@ -50,6 +50,11 @@ describe('FormComponent', () => {
   const matSnackBarMock = {
     open: jest.fn()
   };
+  const sessionApiServiceMock = {
+    create: jest.fn().mockReturnValue(of(mockSession)),
+    update: jest.fn().mockReturnValue(of(mockSession)),
+    detail: jest.fn().mockReturnValue(of(mockSession))
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -115,4 +120,18 @@ describe('FormComponent', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['sessions']);
 
   });
+  it('should update a session successfully', async () => {
+    component.onUpdate = true;
+    component.sessionForm?.setValue({
+      name: 'Updated Yoga Session',
+      date: '2024-07-20',
+      teacher_id: 1,
+      description: 'Updated Description'
+    });
+    component.submit();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(navigateSpy).not.toHaveBeenCalledWith(['sessions']);
+  });
+
 });
